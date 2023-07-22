@@ -21,7 +21,14 @@ jobs:
       - name: Check style
         run: npm run eslint
       - name: Build
-        run: npm run build
+        run: npm run buil
+      - name: Discord Webhook Notify Failure
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ failure() }}
+        with:
+            severity: error
+            details: Build failed!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Test
         run: npm run test
       - name: e2e tests
@@ -51,3 +58,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+      - name: Discord Webhook Notify
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ success() }}
+        with:
+            severity: info
+            details: New version deployed!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+        
