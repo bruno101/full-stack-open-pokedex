@@ -21,7 +21,7 @@ jobs:
       - name: Check style
         run: npm run eslint
       - name: Build
-        run: npm run buil
+        run: npm run build
       - name: Discord Webhook Notify Failure
         uses: rjstone/discord-webhook-notify@v1.0.4
         if: ${{ failure() }}
