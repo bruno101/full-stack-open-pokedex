@@ -1,0 +1,21 @@
+name: Health check
+
+on:
+  schedule:
+    - cron: "10,25,40,55 * * * *"
+
+jobs:
+  health_check_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the deployed service URL
+        uses: jtalk/url-health-check-action@v3
+        with:
+          url: https://render-test-o6j7.onrender.com/jfwfih
+      - name: Discord Webhook Notify Failure
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ failure() }}
+        with:
+          severity: error
+          details: Health check failed!
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}

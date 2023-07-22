@@ -22,6 +22,13 @@ jobs:
         run: npm run eslint
       - name: Build
         run: npm run build
+      - name: Discord Webhook Notify Failure
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ failure() }}
+        with:
+            severity: error
+            details: Build failed!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Test
         run: npm run test
       - name: e2e tests
@@ -47,7 +54,15 @@ jobs:
           fetch-depth: "0"
       - name: Bump version and push tag
         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip') }}
-        uses: anothrNick/github-tag-action@1.55.0
+        uses: anothrNick/github-tag-action@8c8163ef62cf9c4677c8e800f36270af27930f42
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+      - name: Discord Webhook Notify
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ success() && github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip') }}
+        with:
+            severity: info
+            details: New version deployed!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+        
