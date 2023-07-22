@@ -1,15 +1,11 @@
 name: Health check
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches: [master]
-    types: [opened, synchronize]
+  schedule:
+    - cron: "10,25,40,55 * * * *"
 
 jobs:
-  hello_world_job:
+  health_check_job:
     runs-on: ubuntu-latest
     steps:
       - name: Check the deployed service URL
@@ -21,5 +17,5 @@ jobs:
         if: ${{ failure() }}
         with:
           severity: error
-          details: Build failed!
+          details: Health check failed!
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
